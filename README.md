@@ -23,7 +23,8 @@ The generated dataset contains 1,000 records with the following columns:
 - Uses three reservation time slots.
 - Generates member tenure between 1 and 1,200 days.
 - Assigns a higher base no-show probability to newer members.
-- Base no-show probability decreases from approximately 35% for brand-new members to 25% after one year.
+- Base no-show probability decreases gradually from approximately 35% for brand-new members to 25% after 365 days (one year).
+- **For members with more than 365 days of tenure, the base no-show probability remains at 25% rather than decreasing further.**
 - Includes time-slot adjustments and random variation to avoid overly strong correlations.
 - Generates binary no-show outcomes using probability-based random sampling.
 
@@ -35,7 +36,6 @@ The generated dataset contains:
 - No-show reservations: 272 (27.2%)
 
 The distribution is not balanced artificially. No-show outcomes are generated through probability-based random sampling.
-
 
 ## Requirements
 
@@ -94,4 +94,3 @@ hivespace-reservation-no-show-data/
 ## Purpose
 
 This synthetic dataset provides a starting point for exploring reservation no-show patterns and developing predictive models for coworking space operations.
-
