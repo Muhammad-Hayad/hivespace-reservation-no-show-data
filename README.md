@@ -29,12 +29,13 @@ The generated dataset contains 1,000 records with the following columns:
 
 ## No-Show Distribution
 
-The generated dataset has the following distribution:
+The generated dataset contains:
 
-- Attended reservations: 767 (76.7%) — from the initial generation.
-- No-show reservations: 233 (23.3%) — from the initial generation.
+- Attended reservations: 728 (72.8%)
+- No-show reservations: 272 (27.2%)
 
-*Note: The latest regenerated dataset has a different distribution. Run the script to generate and inspect the current results.*
+The distribution is not balanced artificially. No-show outcomes are generated through probability-based random sampling.
+
 
 ## Requirements
 
