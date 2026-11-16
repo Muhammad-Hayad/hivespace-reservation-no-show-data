@@ -98,9 +98,11 @@ print("\nNo-show percentages:")
 print(df["no_show"].value_counts(normalize=True) * 100)
 
 print("\nAverage no-show rate by tenure group:")
-df["tenure_group"] = pd.cut(
-    df["member_tenure_days"],
+analysis_df = df.copy()
+
+analysis_df["tenure_group"] = pd.cut(
+    analysis_df["member_tenure_days"],
     bins=[0, 90, 365, 1200],
     labels=["New", "Intermediate", "Long-term"]
 )
-print(df.groupby("tenure_group", observed=False)["no_show"].mean())
+print(analysis_df.groupby("tenure_group", observed=False)["no_show"].mean())
