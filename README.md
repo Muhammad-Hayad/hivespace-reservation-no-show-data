@@ -2,18 +2,15 @@
 
 ## Project Overview
 
-This project generates a synthetic dataset of 1,000 coworking space reservations for HiveSpace and uses it to explore machine learning approaches for predicting reservation no-shows.
+HiveSpace Reservation No-Show Predictor is a machine learning project designed to explore reservation attendance patterns and evaluate approaches for predicting coworking space no-shows.
 
-The project currently includes two parts:
+The project uses a synthetic dataset of 1,000 coworking space reservations and compares multiple classification models using cross-validation and an independent test set.
 
-1. **Dataset Generation:** Creates realistic synthetic reservation records.
-2. **Model Comparison:** Compares machine learning models using stratified 5-fold cross-validation and evaluates their predictive performance against a simple baseline.
+It also implements a leakage-safe preprocessing and modeling pipeline to ensure that model evaluation is fair and reliable.
 
-## Task 1: Dataset Generation
+## Dataset Information
 
-### Dataset Information
-
-The generated dataset contains 1,000 records with the following columns:
+The generated dataset contains 1,000 reservation records with the following columns:
 
 | Column | Description |
 |---|---|
@@ -44,15 +41,11 @@ The generated dataset contains:
 
 The distribution is not balanced artificially. No-show outcomes are generated through probability-based random sampling.
 
-## Task 2: Model Comparison and Evaluation
-
-### Objective
-
-Compare different classification models using cross-validation and determine whether the available reservation features provide useful predictive information.
+## Model Development
 
 ### Features and Target
 
-The following features are used:
+The following features are used for model training:
 
 - `member_tenure_days`
 - `time_slot`
@@ -63,32 +56,58 @@ The target variable is:
 
 The `member_id` column is excluded because it is an identifier rather than a meaningful predictive feature. `reservation_date` is also excluded from the current model.
 
-### Data Preparation
+### Data Splitting and Preprocessing
 
-- The dataset is split into 80% training data and 20% testing data.
-- Stratified splitting preserves the target-class distribution.
-- Numerical features are processed using `StandardScaler`.
-- Categorical features are processed using `OneHotEncoder`.
-- Preprocessing and model training are combined in a Scikit-learn Pipeline.
+The dataset is divided into:
 
-Preprocessing is performed inside the pipeline during cross-validation. This ensures that scaling and encoding are fitted only on each training fold, helping prevent data leakage.
+- 80% training data
+- 20% testing data
 
-### Models Compared
+Stratified splitting preserves the target-class distribution in both subsets.
 
-Four approaches are evaluated:
+Preprocessing includes:
 
-1. **Prior Baseline:** `DummyClassifier(strategy="prior")`, used as a simple reference that predicts probabilities based on the class distribution.
+- `StandardScaler` for numerical features (`member_tenure_days`).
+- `OneHotEncoder` for categorical features (`time_slot`).
+- `ColumnTransformer` to combine numerical and categorical transformations.
+
+### Data Leakage Prevention with Scikit-learn Pipeline
+
+To prevent data leakage, preprocessing and model training are combined using a Scikit-learn `Pipeline`.
+
+Fitting preprocessing operations on the entire dataset before splitting can allow information from validation or test data to influence the training process, resulting in misleading evaluation results.
+
+The Pipeline prevents this by keeping preprocessing and model training together:
+
+1. During cross-validation, the preprocessing steps are fitted only on the training portion of each fold.
+2. The fitted transformations are applied to that fold's validation portion.
+3. The classifier is trained using the transformed training data.
+4. After cross-validation, the selected model pipeline is fitted on the complete training dataset.
+5. The separate testing dataset is used only for final evaluation.
+
+This ensures that scaling and encoding parameters are learned from training data rather than the complete dataset.
+
+It also makes the preprocessing and prediction workflow consistent between training and testing.
+
+## Models Compared
+
+Four classification approaches are evaluated:
+
+1. **Prior Baseline:** `DummyClassifier(strategy="prior")`, used as a reference model that predicts probabilities based on the training class distribution.
 2. **Logistic Regression:** A linear classification model.
 3. **Decision Tree:** A tree-based classification model.
 4. **Random Forest:** An ensemble of decision trees.
 
+## Model Evaluation
+
 ### Evaluation Method
 
-- Stratified 5-fold cross-validation is used on the training dataset.
+- Stratified 5-fold cross-validation is performed on the training dataset.
 - Models are compared using probability-based RMSE.
-- RMSE is calculated from predicted probabilities (`predict_proba`) and actual binary outcomes (0 or 1).
+- RMSE is calculated using predicted probabilities (`predict_proba`) and actual binary outcomes (0 or 1).
+- The final selected real machine learning model is evaluated on the separate holdout test set.
 
-The metric is the square root of the Brier score. Lower values indicate better probability predictions.
+The evaluation metric is the square root of the Brier score. Lower values indicate better probability predictions.
 
 ### Cross-Validation Results
 
@@ -124,7 +143,7 @@ The Prior Baseline is retained for comparison and is not saved as the selected m
 
 **Important:** Although Logistic Regression is the best among the three real machine learning models tested, it does not outperform the Prior Baseline. Therefore, it should not be considered a reliable production-ready predictor at this stage.
 
-### Next Steps
+## Future Improvements
 
 Further improvements should focus on feature engineering rather than simply tuning the current models.
 
@@ -156,11 +175,13 @@ git clone https://github.com/Muhammad-Hayad/hivespace-reservation-no-show-data.g
 cd hivespace-reservation-no-show-data
 ```
 
-Create and activate a virtual environment:
+Create a virtual environment:
 
 ```bash
 python -m venv .venv
 ```
+
+Activate the virtual environment.
 
 Windows PowerShell:
 
@@ -174,7 +195,7 @@ Install dependencies:
 pip install -r requirements.txt
 ```
 
-## Run the Project
+## Running the Project
 
 ### Generate the Dataset
 
@@ -217,6 +238,6 @@ hivespace-reservation-no-show-data/
 
 ## Purpose
 
-This project provides a starting point for exploring reservation no-show patterns, generating synthetic operational data, comparing machine learning models, and evaluating predictive performance honestly.
+This project provides a practical foundation for exploring reservation no-show patterns, generating synthetic operational data, comparing machine learning models, and evaluating predictive performance honestly.
 
-The current evaluation highlights the importance of comparing machine learning models against simple baselines before considering them useful for real-world prediction.
+It demonstrates the importance of proper preprocessing, data leakage prevention, cross-validation, and baseline comparisons when developing reliable machine learning systems.
