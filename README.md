@@ -241,3 +241,7 @@ hivespace-reservation-no-show-data/
 This project provides a practical foundation for exploring reservation no-show patterns, generating synthetic operational data, comparing machine learning models, and evaluating predictive performance honestly.
 
 It demonstrates the importance of proper preprocessing, data leakage prevention, cross-validation, and baseline comparisons when developing reliable machine learning systems.
+
+## Model Card
+
+See the [Model Card](model_card.md) for details about the model's purpose, training process, performance, limitations, and ethical considerations.
